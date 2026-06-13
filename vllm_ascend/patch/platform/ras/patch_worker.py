@@ -62,7 +62,7 @@ from vllm.v1.executor.abstract import Executor, FailureCallback
 from vllm.v1.executor.multiproc_executor import WorkerProc
 from vllm.v1.outputs import AsyncModelRunnerOutput, DraftTokenIds, ModelRunnerOutput
 from vllm.v1.worker.worker_base import WorkerWrapperBase
-from vllm_ascend.recovery.types import ExceptionInfo
+from vllm_ascend.recovery.types import ExceptionInfo, _NETWORK_CHECK_RPC_OUTPUT_RANK
 def enqueue_output(self, output: Any):
     """Prepares output from the worker and enqueues it to the
     worker_response_mq. If the output is an Exception, it is
@@ -89,5 +89,13 @@ def enqueue_output(self, output: Any):
         result = (WorkerProc.ResponseStatus.SUCCESS, output)
     if (response_mq := self.worker_response_mq) is not None:
         response_mq.enqueue(result)
+
+def network_check(self) -> None:
+    assert self.rpc_broadcast_mq is not None, (
+        "network_check should not be called on follower node"
+    )
+    self.rpc_broadcast_mq.enqueue(
+        ("_do_network_check_on_worker", (), {}, _NETWORK_CHECK_RPC_OUTPUT_RANK)
+    )
 
 WorkerProc.enqueue_output = enqueue_output

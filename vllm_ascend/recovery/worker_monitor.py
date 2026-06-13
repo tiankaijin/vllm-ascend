@@ -37,8 +37,6 @@ class WorkerMonitor:
         ) = get_engine_recovery_bind_address(self.engine_index)
         
         self._exception_decoder = msgspec.msgpack.Decoder(ExceptionInfo)
-        self._recovery_decoder = msgspec.msgpack.Decoder(WorkerStepDispatch)
-        self._network_check_decoder = msgspec.msgpack.Decoder(NetworkCheck)
         self._monitor_thread = threading.Thread | None
     
     def build_exception_handler_factory(self) -> ExceptionHandlerFactory:
@@ -59,6 +57,7 @@ class WorkerMonitor:
                     "[WorkerMonitor] NetworkCheck synchronize detected error: %s",
                     e,
                 )
+                self._worker.exception_occur = True
                 exception_info = ExceptionInfo(
                     exception_type=type(e).__name__,
                     exception_msg=str(e),
@@ -154,16 +153,16 @@ class WorkerMonitor:
                         continue
                     if msg is not None:
                         if msg_type == "networkcheck":
-                            network_check = msgspec.msgpack.decode(msg_data, type=NetworkCheck)
+                            network_check = msgspec.convert(msg_data, type=NetworkCheck)
                             logger.info(
                                 "[WorkerMonitor] Received NetworkCheck from engine %d, "
                                 "starting synchronize check",
                                 network_check.engine_index,
                             )
-                            self._do_network_check(worker_input_socket)
+                            self._do_network_check()
                             continue
-                        elif msg_type == "recoverystep":
-                            recovery_step_with_cfg = self._recovery_decoder.decode(buffer, type=WorkerStepDispatch)
+                        elif msg_type == "workerstepdispatch":
+                            recovery_step_with_cfg = msgspec.convert(msg_data, type=WorkerStepDispatch)
                             logger.info("[WorkerMonitor] Receive recovery_step from EngineCoreProc")
                             recovery_step = recovery_step_with_cfg.step
                             cfg = recovery_step_with_cfg.cfg

@@ -237,9 +237,8 @@ class RecoveryHandler:
                 "engine %d, dispatching to workers",
                 self._engine_index, network_check.engine_index,
             )
-            self._recover_step_pub_sock.send(
-                msgspec.msgpack.encode(("networkcheck", network_check))
-            )
+            self._engine_core.model_executor.netwok_check(non_block=True)
+            
         elif msg_type == "recoverycomplete":
             recovery_complete = msgspec.convert(msg_data, type=RecoveryComplete)
             self._handle_recovery_complete(recovery_complete)

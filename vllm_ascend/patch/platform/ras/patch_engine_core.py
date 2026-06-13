@@ -3,6 +3,8 @@ import signal
 import time
 import threading
 import uuid
+
+from concurrent.futures import Future
 from contextlib import ExitStack
 from typing import cast
 
@@ -496,5 +498,5 @@ def step_with_batch_queue(
             batch_queue.appendleft((future, deferred_scheduler_output, exec_future))
 
         return engine_core_outputs, model_executed
-
+EngineCoreProc.step_with_batch_queue = step_with_batch_queue
 EngineCoreProc.run_engine_core = _patched_run_engine_core
