@@ -110,6 +110,13 @@ env_variables: dict[str, Callable[[], Any]] = {
     # Control the aclrtMemcpyBatchAsync compile path for KV cache offloading.
     # "1": force enable, "0": force disable, None: auto-detect from CANN headers.
     "VLLM_ASCEND_ENABLE_BATCH_MEMCPY": lambda: os.getenv("VLLM_ASCEND_ENABLE_BATCH_MEMCPY", None),
+    # Whether to enable recovery for device errors. When enabled, the
+    # engine can automatically recover from failures by restarting the
+    # device and reprocessing dirty requests. Default is 0 (disabled).
+    # Set to 1 to enable. Detailed configuration is available via
+    # --additional-config with key "recovery_config", e.g.
+    # {"recovery_config": {"enable": true, "cpu_process_group_timeout": 30}}
+    "VLLM_ASCEND_ENABLE_RECOVERY": lambda: bool(int(os.getenv("VLLM_ASCEND_ENABLE_RECOVERY", "0"))),
 }
 
 # end-env-vars-definition

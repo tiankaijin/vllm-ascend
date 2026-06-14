@@ -48,3 +48,7 @@ import vllm_ascend.patch.platform.patch_kv_cache_coordinator  # noqa
 import vllm_ascend.patch.platform.patch_speculative_config  # noqa
 
 import vllm_ascend.patch.platform.patch_scheduler  # noqa
+
+if envs.VLLM_ASCEND_ENABLE_RECOVERY:
+    import vllm_ascend.patch.platform.patch_recovery_worker  # noqa
+    import vllm_ascend.patch.platform.patch_recovery_coordinator  # noqa
