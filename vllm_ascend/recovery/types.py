@@ -85,5 +85,4 @@ class RecoveryComplete(msgspec.Struct):
 
 class NetworkCheck(msgspec.Struct):
     engine_index: int
-    current_wave: int
 
