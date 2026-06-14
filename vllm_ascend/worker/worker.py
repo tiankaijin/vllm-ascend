@@ -896,7 +896,12 @@ class NPUWorker(WorkerBase):
         except Exception as e:
             logger.info("query NPU card %s fail: %s", self.local_rank, e)
         return
-
+    
+    @fault_recovery_decorator()
+    def network_check(self) -> None:
+        logger.info("Worker begin to sync stream")
+        torch_npu.npu.current_stream().synchronize()
+        logger.info("Worker finished sync stream")
 
 def parse_text_output(output) -> None:
     lines = output.strip().split("\n")

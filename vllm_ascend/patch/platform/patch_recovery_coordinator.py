@@ -14,6 +14,7 @@ from vllm.utils.network_utils import make_zmq_socket
 from vllm.utils.system_utils import get_mp_context
 from vllm_ascend.recovery.types import (
     FaultReport,
+    NetworkCheck,
     RecoveryComplete,
     RecoveryPlanResult,
 )
@@ -122,6 +123,7 @@ def _patched_process_input_socket(
     last_stats_wave = -1
     last_step_counts = None
     is_recovering = False
+    report_received = False
     engine_count = len(self.engines)
 
     with (
@@ -331,7 +333,7 @@ def _patched_process_input_socket(
                 if msg is not None:
                     if msg_type == "faultreport":
                         fault_report = msgspec.convert(msg_data, type=FaultReport)
-                        if is_recovering:
+                        if is_recovering and report_received:
                             logger.info(
                                 "[RAS] Ignoring FaultReport from engine %d worker %d "
                                 "while recovering, exp=%s",
@@ -341,6 +343,7 @@ def _patched_process_input_socket(
                             )
                             continue
                         is_recovering = True
+                        report_received = True
                         plan_results: dict[int, RecoveryPlanResult] = {}
                         plan_deadline = time.time() + fault_report.plan.timeout_s
                         logger.info(
@@ -385,11 +388,13 @@ def _patched_process_input_socket(
                                 ))
                             ))
                             is_recovering = False
+                            report_received = False
                             logger.info(
                                 "[RAS] Broadcast RecoveryComplete(failed) to all engines"
                             )
                         elif len(plan_results) == engine_count:
                             is_recovering = False
+                            report_received = False
                             logger.info(
                                 "[RAS] All engines reported: ALL SUCCESS",
                             )
@@ -404,7 +409,21 @@ def _patched_process_input_socket(
                                 "[RAS] Broadcast RecoveryComplete(success, wave=%d) "
                                 "to all engines",
                                 current_wave,
+                            )              
+                    elif msg_type == "networkcheck":
+                        if is_recovering:
+                            logger.info(
+                                "[RAS] Ignoring networkcheck from engine %d "
                             )
+                            continue
+                        is_recovering = True
+                        network_check = msgspec.convert(msg_data, type=NetworkCheck)
+                        logger.info(
+                            "[RAS] Received NetworkCheck from engine %d, "
+                            "broadcasting to all engines",
+                            network_check.engine_index,
+                        )
+                        recovery_pub.send(msgspec.msgpack.encode(("networkcheck", network_check)))
                     else:
                         logger.warning(
                             "[RAS] Unknown recovery msg type: %s", msg_type
@@ -429,6 +448,7 @@ def _patched_process_input_socket(
                     ))
                 ))
                 is_recovering = False
+                report_received = False
                 logger.info(
                     "[RAS] Broadcast RecoveryComplete(timeout) to all engines"
                 )

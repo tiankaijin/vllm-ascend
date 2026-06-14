@@ -4,6 +4,8 @@ from typing import Any, Tuple
 import msgspec
 from vllm_ascend.recovery.actions import get_engine_core_action, get_worker_action
 
+FUTURE_TIMEOUT_SECONDS = 45
+_NETWORK_CHECK_RPC_OUTPUT_RANK = -1
 
 class StepTarget(str, Enum):
     ENGINE_CORE = "engine_core"
@@ -80,3 +82,7 @@ class RecoveryComplete(msgspec.Struct):
     plan_name: str
     success: bool
     current_wave: int
+
+class NetworkCheck(msgspec.Struct):
+    engine_index: int
+
