@@ -47,33 +47,6 @@ class WorkerMonitor:
         
         return exception_handler_factory
 
-    def _do_network_check(self):
-        def _sync_and_report():
-            try:
-                logger.info("[WorkerMonitor] NetworkCheck sync begin")
-                torch.npu.current_stream().synchronize()
-            except Exception as e:
-                logger.error(
-                    "[WorkerMonitor] NetworkCheck synchronize detected error: %s",
-                    e,
-                )
-                self._worker.exception_occur = True
-                exception_info = ExceptionInfo(
-                    exception_type=type(e).__name__,
-                    exception_msg=str(e),
-                )
-                try:
-                    self._worker.worker_input_socket.send(
-                        msgspec.msgpack.encode(exception_info)
-                    )
-                except Exception:
-                    logger.exception(
-                        "[WorkerMonitor] Failed to send exception via worker_input_socket"
-                    )
-
-        t = threading.Thread(target=_sync_and_report, name="NetworkCheckSync", daemon=True)
-        t.start()
-
     def start(self):
         self._monitor_thread = threading.Thread(
             target=self._run_monitor,
@@ -152,16 +125,7 @@ class WorkerMonitor:
                         logger.exception("Failed to deserialize recovery msg")
                         continue
                     if msg is not None:
-                        if msg_type == "networkcheck":
-                            network_check = msgspec.convert(msg_data, type=NetworkCheck)
-                            logger.info(
-                                "[WorkerMonitor] Received NetworkCheck from engine %d, "
-                                "starting synchronize check",
-                                network_check.engine_index,
-                            )
-                            self._do_network_check()
-                            continue
-                        elif msg_type == "workerstepdispatch":
+                        if msg_type == "workerstepdispatch":
                             recovery_step_with_cfg = msgspec.convert(msg_data, type=WorkerStepDispatch)
                             logger.info("[WorkerMonitor] Receive recovery_step from EngineCoreProc")
                             recovery_step = recovery_step_with_cfg.step

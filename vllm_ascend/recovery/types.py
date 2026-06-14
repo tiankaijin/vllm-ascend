@@ -81,11 +81,9 @@ class RecoveryPlanResult(msgspec.Struct):
 class RecoveryComplete(msgspec.Struct):
     plan_name: str
     success: bool
-<<<<<<< HEAD
     current_wave: int
 
 class NetworkCheck(msgspec.Struct):
     engine_index: int
-=======
     current_wave: int
->>>>>>> develop/dev-merge
+

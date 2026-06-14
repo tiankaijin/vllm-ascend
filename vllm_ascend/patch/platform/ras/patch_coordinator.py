@@ -409,7 +409,8 @@ def _patched_process_input_socket(
                                 "[RAS] Broadcast RecoveryComplete(success, wave=%d) "
                                 "to all engines",
                                 current_wave,
-                            )              
+                            )
+                            
                     elif msg_type == "networkcheck":
                         if is_recovering:
                             logger.info(
@@ -429,7 +430,7 @@ def _patched_process_input_socket(
                             "[RAS] Unknown recovery msg type: %s", msg_type
                         )
 
-            if is_recovering and time.time() > plan_deadline:
+            if is_recovering and report_received and time.time() > plan_deadline:
                 missing = [
                     i for i in range(engine_count) if i not in plan_results
                 ]
