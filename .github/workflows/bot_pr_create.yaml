@@ -20,7 +20,7 @@ name: PR Create
 on:
   # The PR updated when PR opened and push new commits
   pull_request_target:
-    types: [opened]
+    types: [opened, synchronize]
     branches:
       - 'main'
 
@@ -98,7 +98,8 @@ jobs:
           sync-labels: true
 
       - name: Remind to run full CI on PR
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        if: github.event.action == 'opened'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             github.rest.issues.createComment({
