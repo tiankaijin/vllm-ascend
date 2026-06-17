@@ -364,6 +364,29 @@
     - vllm_ascend/ops/rel_pos_attention.py
   tests: []
 
+# Recovery
+- name: recovery
+  optional: true
+  source_file_dependencies:
+    - vllm_ascend/recovery/
+    - vllm_ascend/ascend_config.py
+    - vllm_ascend/compilation/acl_graph.py
+    - vllm_ascend/envs.py
+    - vllm_ascend/patch/platform/patch_balance_schedule.py
+    - vllm_ascend/patch/platform/patch_recovery_coordinator.py
+    - vllm_ascend/patch/platform/patch_recovery_worker.py
+    - vllm_ascend/worker/worker.py
+  tests:
+    - tests/ut/recovery/test_actions.py
+    - tests/ut/recovery/test_engine_core_handler.py
+    - tests/ut/recovery/test_exception_handler.py
+    - tests/ut/recovery/test_types.py
+    - tests/ut/recovery/test_utils.py
+    - tests/ut/recovery/test_worker_decorator.py
+    - tests/ut/recovery/test_worker_monitor.py
+    - tests/e2e/pull_request/one_card/recovery/test_recovery_basic.py
+    - tests/e2e/pull_request/two_card/recovery/test_recovery_multi_card.py
+
 # Patch
 - name: patch
   optional: true

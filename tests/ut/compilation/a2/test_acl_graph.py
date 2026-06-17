@@ -935,3 +935,104 @@ class TestPCPDCPGraphParams(TestBase):
             AscendAttentionCPImpl.update_graph_params(self.update_stream, forward_context, 4, None)
 
         _mock_graph_task_end.assert_called_once()
+
+
+class TestAclGraphRecovery(TestBase):
+
+    def test_is_stream_error_by_code(self):
+        from vllm_ascend.compilation.acl_graph import _is_stream_resource_capture_error
+
+        self.assertTrue(
+            _is_stream_resource_capture_error(
+                RuntimeError("207008 stream resource exhausted")
+            )
+        )
+
+    def test_is_stream_error_by_marker_insufficient(self):
+        from vllm_ascend.compilation.acl_graph import _is_stream_resource_capture_error
+
+        self.assertTrue(
+            _is_stream_resource_capture_error(RuntimeError("INSUFFICIENT_STREAM_RESOURCES"))
+        )
+
+    def test_is_stream_error_by_marker_exhausted(self):
+        from vllm_ascend.compilation.acl_graph import _is_stream_resource_capture_error
+
+        self.assertTrue(
+            _is_stream_resource_capture_error(RuntimeError("stream resources are insufficient"))
+        )
+
+    def test_is_stream_error_no_match(self):
+        from vllm_ascend.compilation.acl_graph import _is_stream_resource_capture_error
+
+        self.assertFalse(_is_stream_resource_capture_error(RuntimeError("normal error")))
+
+    def test_is_stream_error_code_with_keyword(self):
+        from vllm_ascend.compilation.acl_graph import _is_stream_resource_capture_error
+
+        self.assertTrue(
+            _is_stream_resource_capture_error(RuntimeError("code 207008 stream resource failure"))
+        )
+
+    def test_raise_stream_error_wraps_message(self):
+        from vllm_ascend.compilation.acl_graph import _raise_stream_resource_capture_error
+
+        with self.assertRaisesRegex(RuntimeError, "Original error"):
+            _raise_stream_resource_capture_error(RuntimeError("original"))
+
+    def test_entry_need_reset_default(self):
+        from vllm_ascend.compilation.acl_graph import ACLGraphEntry
+
+        entry = ACLGraphEntry(batch_descriptor=Mock(), aclgraph=Mock())
+        self.assertFalse(entry.need_reset)
+
+    def test_label_reset_all_graphs(self):
+        from vllm_ascend.compilation.acl_graph import ACLGraphEntry, ACLGraphWrapper
+
+        wrapper = Mock()
+        entry1 = ACLGraphEntry(batch_descriptor=Mock(), aclgraph=Mock())
+        entry2 = ACLGraphEntry(batch_descriptor=Mock(), aclgraph=Mock())
+        wrapper.concrete_aclgraph_entries = {"key1": entry1, "key2": entry2}
+        ACLGraphWrapper._all_instances.add(wrapper)
+        try:
+            ACLGraphWrapper.label_reset_all_graphs(reset_graph_pool=False)
+            self.assertTrue(entry1.need_reset)
+            self.assertTrue(entry2.need_reset)
+        finally:
+            ACLGraphWrapper._all_instances.discard(wrapper)
+
+    @patch("vllm_ascend.compilation.acl_graph.current_platform")
+    def test_label_reset_all_graphs_reset_pool(self, mock_platform):
+        from vllm_ascend.compilation.acl_graph import ACLGraphEntry, ACLGraphWrapper
+
+        wrapper = Mock()
+        wrapper.concrete_aclgraph_entries = {
+            "key1": ACLGraphEntry(batch_descriptor=Mock(), aclgraph=Mock()),
+        }
+        ACLGraphWrapper._all_instances.add(wrapper)
+        try:
+            ACLGraphWrapper.label_reset_all_graphs(reset_graph_pool=True)
+            self.assertIsNotNone(wrapper.graph_pool)
+        finally:
+            ACLGraphWrapper._all_instances.discard(wrapper)
+
+    def test_clear_all_graphs(self):
+        from vllm_ascend.compilation.acl_graph import ACLGraphWrapper
+
+        wrapper = Mock()
+        wrapper.concrete_aclgraph_entries = {"key1": Mock(), "key2": Mock()}
+        ACLGraphWrapper._all_instances.add(wrapper)
+        try:
+            ACLGraphWrapper.clear_all_graphs()
+            wrapper.clear_graphs.assert_called_once()
+        finally:
+            ACLGraphWrapper._all_instances.discard(wrapper)
+
+    def test_all_instances_weakref_cleanup(self):
+        from vllm_ascend.compilation.acl_graph import ACLGraphWrapper
+
+        wrapper = ACLGraphWrapper.__new__(ACLGraphWrapper)
+        ACLGraphWrapper._all_instances.add(wrapper)
+        self.assertIn(wrapper, list(ACLGraphWrapper._all_instances))
+        ACLGraphWrapper._all_instances.discard(wrapper)
+        self.assertNotIn(wrapper, list(ACLGraphWrapper._all_instances))

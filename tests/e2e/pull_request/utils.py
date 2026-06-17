@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+import os
+import shutil
+import tempfile
+from pathlib import Path
 
 from vllm import SamplingParams
 
@@ -190,3 +194,77 @@ def compare_logprobs(
         _check_prefill_token(base_seq, comp_seq, prompt_idx, atol)
         for token_idx in range(1, 3):
             _check_decode_token(base_seq, comp_seq, token_idx, prompt_idx, decode_atol)
+
+# ---------------------------------------------------------------------------
+# Recovery E2E test utilities
+# ---------------------------------------------------------------------------
+
+_RECOVERY_SITECUSTOMIZE = r'''
+import os
+import sys
+
+_FAULT_CODE = os.environ.get("VLLM_ASCEND_RECOVERY_TEST_INJECT")
+if _FAULT_CODE:
+    _TARGET = "vllm_ascend.recovery.worker_decorator"
+    _INJECTED = [False]
+
+    import builtins as _bi
+    import functools
+    _bi_import = _bi.__import__
+
+    def _custom_import(name, *args, **kwargs):
+        module = _bi_import(name, *args, **kwargs)
+        if name == _TARGET and name in sys.modules:
+            mod = sys.modules[name]
+            _orig = mod.fault_recovery_decorator
+
+            def _patched():
+                def decorator(func):
+                    wrapper = _orig()(func)
+
+                    @functools.wraps(func)
+                    def _wrap(self, *a, **kw):
+                        if not _INJECTED[0]:
+                            _INJECTED[0] = True
+                            raise RuntimeError(
+                                f"HCCL error [{_FAULT_CODE}] simulated test fault"
+                            )
+                        return wrapper(self, *a, **kw)
+
+                    return _wrap
+
+                return decorator
+
+            mod.fault_recovery_decorator = _patched
+
+        return module
+
+    _bi.__import__ = _custom_import
+'''
+
+RECOVERY_FAULT_ERROR_CODE = "507057"
+
+
+def make_recovery_fault_injection_env(fault_code=RECOVERY_FAULT_ERROR_CODE):
+    """Create a temp sitecustomize.py and return env_dict + cleanup callable.
+
+    The sitecustomize.py intercepts ``vllm_ascend.recovery.worker_decorator``
+    imports and wraps ``fault_recovery_decorator`` to raise a simulated HCCL
+    fault on the first call.
+
+    Returns a 2-tuple of (env_dict, cleanup_callable). The caller is
+    responsible for calling ``cleanup()`` after the test.
+    """
+    tmpdir = tempfile.mkdtemp(prefix="vllm_recovery_test_")
+    dst = Path(tmpdir) / "sitecustomize.py"
+    dst.write_text(_RECOVERY_SITECUSTOMIZE)
+
+    env = {
+        "VLLM_ASCEND_RECOVERY_TEST_INJECT": fault_code,
+        "PYTHONPATH": tmpdir + os.pathsep + os.environ.get("PYTHONPATH", ""),
+    }
+
+    def cleanup():
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+    return env, cleanup

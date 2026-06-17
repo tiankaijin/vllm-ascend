@@ -308,3 +308,122 @@ class TestAscendConfig(TestBase):
         second_ascend_config = init_ascend_config(second_vllm_config)
         self.assertIsNot(first_ascend_config, second_ascend_config)
         self.assertTrue(second_ascend_config.ascend_compilation_config.enable_npugraph_ex)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_default_values(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(user_config=None, env_enable=False)
+        self.assertFalse(cfg.enable)
+        self.assertEqual(cfg.cpu_process_group_timeout, 30)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_enable_true_from_additional(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(user_config={"enable": True}, env_enable=False)
+        self.assertTrue(cfg.enable)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_enable_or_from_env(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(user_config={"enable": False}, env_enable=True)
+        self.assertTrue(cfg.enable)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_enable_false_both(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(user_config={"enable": False}, env_enable=False)
+        self.assertFalse(cfg.enable)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_enable_true_from_env_only(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(user_config={}, env_enable=True)
+        self.assertTrue(cfg.enable)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_custom_timeout(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(
+            user_config={"enable": True, "cpu_process_group_timeout": 45},
+            env_enable=False,
+        )
+        self.assertEqual(cfg.cpu_process_group_timeout, 45)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_timeout_below_min_raises(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        with self.assertRaisesRegex(ValueError, r"between 25s and 60s.*got 10s"):
+            RecoveryConfig(
+                user_config={"enable": True, "cpu_process_group_timeout": 10},
+                env_enable=False,
+            )
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_timeout_above_max_raises(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        with self.assertRaisesRegex(ValueError, r"between 25s and 60s.*got 100s"):
+            RecoveryConfig(
+                user_config={"enable": True, "cpu_process_group_timeout": 100},
+                env_enable=False,
+            )
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_timeout_at_min_boundary(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(
+            user_config={"enable": True, "cpu_process_group_timeout": 25},
+            env_enable=False,
+        )
+        self.assertEqual(cfg.cpu_process_group_timeout, 25)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_timeout_at_max_boundary(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(
+            user_config={"enable": True, "cpu_process_group_timeout": 60},
+            env_enable=False,
+        )
+        self.assertEqual(cfg.cpu_process_group_timeout, 60)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    def test_recovery_config_validation_skipped_when_disabled(self, mock_fix_incompatible_config):
+        from vllm_ascend.ascend_config import RecoveryConfig
+
+        cfg = RecoveryConfig(
+            user_config={"enable": False, "cpu_process_group_timeout": 200},
+            env_enable=False,
+        )
+        self.assertFalse(cfg.enable)
+        self.assertEqual(cfg.cpu_process_group_timeout, 200)
+
+    @_clean_up_ascend_config
+    @patch("vllm_ascend.platform.NPUPlatform.check_and_update_config")
+    @patch.dict(os.environ, {"VLLM_ASCEND_ENABLE_RECOVERY": "0"})
+    def test_recovery_config_ascend_config_integration(self, mock_fix_incompatible_config):
+        test_vllm_config = VllmConfig()
+        test_vllm_config.additional_config = {"recovery_config": {"enable": True}}
+
+        ascend_config = init_ascend_config(test_vllm_config)
+        self.assertTrue(ascend_config.recovery_config.enable)
+        self.assertEqual(ascend_config.recovery_config.cpu_process_group_timeout, 30)
