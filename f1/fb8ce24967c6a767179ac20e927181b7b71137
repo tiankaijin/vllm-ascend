@@ -1,0 +1,14 @@
+vllm_ascend/attention/mla_v1.py
+  h_ad66a26c65370e 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "f1fb8ce24967c6a767179ac20e927181b7b71137",
+  "prompts": {},
+  "humans": {
+    "h_ad66a26c65370e": {
+      "author": "tiankaijin <tiankaijin1@h-partners.com>"
+    }
+  }
+}
