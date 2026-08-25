@@ -11,7 +11,10 @@ from vllm.logger import logger
 from vllm.model_executor.layers.attention.mla_attention import (
     MLACommonMetadataBuilder,
 )
-from vllm.model_executor.layers.attention.pcp import _gather_prefill_cache_inputs
+if vllm_version_is("0.27.1"):
+    from vllm.model_executor.layers.attention.pcp import _gather_prefill_cache_inputs  # type: ignore[import-not-found]
+else:
+    from vllm.v1.attention.ops.pcp import _gather_prefill_cache_inputs  # type: ignore[import-not-found]
 from vllm.model_executor.layers.linear import UnquantizedLinearMethod
 from vllm.utils.math_utils import cdiv, round_down
 from vllm.v1.attention.backend import (
