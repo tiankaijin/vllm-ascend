@@ -1,0 +1,32 @@
+vllm_ascend/patch/worker/patch_distributed.py
+  s_dae2620ef5ff68::t_2c5fffcb1d629b 184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "2425bf0a6e287c3056e64f2c91983474ff10a714",
+  "prompts": {},
+  "sessions": {
+    "s_dae2620ef5ff68": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a8d07157bc731d721251f60",
+        "model": "deepseek-V4-Pro"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "source_scene": "agent",
+        "operation_id": "6a8d9a127bc731d7212520a2",
+        "external_session_id": "6a8d07157bc731d721251f60",
+        "client_type": "ide",
+        "tool_type": "builtin",
+        "dedupe_key": "6a8d07157bc731d721251f60:6a8d9a127bc731d7212520a2:afterEdit:b2cd34cc",
+        "runtime_client": "trae-tob-git-ai",
+        "edit_kind": "file_edit",
+        "tool_id": "icube:applyChatSnapshotPatch",
+        "tool_use_id": "6a8d9a127bc731d7212520a2",
+        "session_id": "6a8d07157bc731d721251f60"
+      }
+    }
+  }
+}
