@@ -1,0 +1,66 @@
+vllm_ascend/patch/worker/patch_distributed.py
+  s_e7f065dd97fa73::t_f9fd9b11fdf3a2 183-184
+vllm_ascend/ascend_config.py
+  s_dae2620ef5ff68::t_bb9fb565e8f247 261
+  s_dae2620ef5ff68::t_f33085f7978b85 308
+  s_dae2620ef5ff68::t_5448fd75c1cd8d 327-331
+vllm_ascend/distributed/device_communicators/npu_communicator.py
+  h_ad66a26c65370e 38-40
+vllm_ascend/worker/worker.py
+  h_ad66a26c65370e 85,169,191-194,460-461
+vllm_ascend/envs.py
+  s_dae2620ef5ff68::t_0eaf81f36887b7 103-106
+vllm_ascend/worker/sentinel/npu_worker_sentinel.py
+  h_ad66a26c65370e 1-60
+vllm_ascend/worker/model_runner_v1.py
+  h_ad66a26c65370e 1785-1803
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "a7dc7cda0e769a6a0e91f78864342c00d5917b37",
+  "prompts": {},
+  "humans": {
+    "h_ad66a26c65370e": {
+      "author": "tiankaijin <tiankaijin1@h-partners.com>"
+    }
+  },
+  "sessions": {
+    "s_dae2620ef5ff68": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a8d07157bc731d721251f60",
+        "model": "deepseek-V4-Pro"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "session_id": "6a8d07157bc731d721251f60",
+        "runtime_client": "trae-tob-git-ai",
+        "tool_id": "icube:applyChatSnapshotPatch",
+        "dedupe_key": "6a8d07157bc731d721251f60:6a8d10017bc731d721251fc4:afterEdit:238b508c",
+        "external_session_id": "6a8d07157bc731d721251f60",
+        "edit_kind": "file_edit",
+        "client_type": "ide",
+        "operation_id": "6a8d10017bc731d721251fc4",
+        "tool_type": "builtin",
+        "source_scene": "agent",
+        "tool_use_id": "6a8d10017bc731d721251fc4"
+      }
+    },
+    "s_e7f065dd97fa73": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-fb69c082-2e29-4d51-8779-95333c788e93",
+        "model": "default"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "client_type": "ide",
+        "tool": "trae-cue",
+        "source_scene": "cue",
+        "external_session_id": "icr-fb69c082-2e29-4d51-8779-95333c788e93",
+        "edit_kind": "file_edit"
+      }
+    }
+  }
+}
