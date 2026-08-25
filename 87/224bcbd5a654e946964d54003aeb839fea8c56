@@ -1,0 +1,64 @@
+vllm_ascend/worker/worker.py
+  s_8cd394564bbf1c::t_88b498c2408655 639
+  s_bbd3e2bc99bb1e::t_ebde7c25cc7360 641
+  h_ad66a26c65370e 110
+  s_0cb60706e1ee57::t_d9955ed8457cd9 640
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "87224bcbd5a654e946964d54003aeb839fea8c56",
+  "prompts": {},
+  "humans": {
+    "h_ad66a26c65370e": {
+      "author": "tiankaijin <tiankaijin1@h-partners.com>"
+    }
+  },
+  "sessions": {
+    "s_0cb60706e1ee57": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-5c85a35b-17f4-429c-bafb-7a2a1c1142bd",
+        "model": "default"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "external_session_id": "icr-5c85a35b-17f4-429c-bafb-7a2a1c1142bd",
+        "client_type": "ide",
+        "tool": "trae-cue",
+        "edit_kind": "file_edit",
+        "source_scene": "cue"
+      }
+    },
+    "s_8cd394564bbf1c": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-a955ace5-c565-499f-b748-592a8824fb80",
+        "model": "default"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "external_session_id": "icr-a955ace5-c565-499f-b748-592a8824fb80",
+        "source_scene": "cue",
+        "tool": "trae-cue",
+        "client_type": "ide",
+        "edit_kind": "file_edit"
+      }
+    },
+    "s_bbd3e2bc99bb1e": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-f3d1ea2f-7507-4a28-b22b-4906affc758d",
+        "model": "default"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "edit_kind": "file_edit",
+        "source_scene": "cue",
+        "tool": "trae-cue",
+        "external_session_id": "icr-f3d1ea2f-7507-4a28-b22b-4906affc758d",
+        "client_type": "ide"
+      }
+    }
+  }
+}
