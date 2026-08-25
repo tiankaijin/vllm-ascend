@@ -181,7 +181,7 @@ class GroupCoordinatorPatch(GroupCoordinator):
                     self.rank_in_group = ranks.index(self.rank)
                     self.cpu_group = cpu_group
                     if timeout is not None:
-                        _set_pg_timeout(cpu_group, timeout)
+                        _set_pg_timeout(timeout, cpu_group)
                 self_device_group = device_group
 
         if self_device_group is not None:
