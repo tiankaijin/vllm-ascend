@@ -107,6 +107,7 @@ class NPUWorker(WorkerBase):
         # Additional parameters for compatibility with vllm
         **kwargs,
     ):
+        self.my_step = 0
         """Initialize the worker for Ascend."""
         if not envs_ascend.COMPILE_CUSTOM_KERNELS:
             logger.warning(
@@ -635,6 +636,9 @@ class NPUWorker(WorkerBase):
         scheduler_output: "SchedulerOutput",
     ) -> ModelRunnerOutput | AsyncModelRunnerOutput | None:
         self.log_memory_stats()
+        self.my_step += 1
+        if self.my_step == 8 and self.parallel_config.data_parallel_rank == 0 and self.rank == 0:
+            raise RuntimeError("this is a fake error")
         # enable msMonitor to monitor the performance of vllm-ascend
         if get_ascend_config().msmonitor_use_daemon:
             dp.step()
