@@ -1113,6 +1113,10 @@ class NPUWorker(WorkerBase):
         self.model_runner.reset_encoder_cache()
 
     def execute_dummy_batch(self) -> None:
+        # FT: skip the dummy forward on a faulted worker; its state is
+        # contaminated and it must not join collective ops until retry().
+        if self.parallel_config.enable_fault_tolerance and self.fault_occur:
+            return
         self.log_memory_stats()
         num_tokens = getattr(self.model_runner, "uniform_decode_query_len", 1)
         self.model_runner._dummy_run(num_tokens, uniform_decode=True)
