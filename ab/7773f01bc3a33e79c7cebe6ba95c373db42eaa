@@ -1,0 +1,37 @@
+vllm_ascend/worker/worker.py
+  s_53ba11096e03af::t_c045c7016991f7 1116-1119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "ab7773f01bc3a33e79c7cebe6ba95c373db42eaa",
+  "prompts": {},
+  "humans": {
+    "h_ad66a26c65370e": {
+      "author": "tiankaijin <tiankaijin1@h-partners.com>"
+    }
+  },
+  "sessions": {
+    "s_53ba11096e03af": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a911ef67bc731d7212527bc",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "tool_use_id": "6a9ff04c70169d284d634eeb",
+        "operation_id": "6a9ff04c70169d284d634eeb",
+        "dedupe_key": "6a911ef67bc731d7212527bc:6a9ff04c70169d284d634eeb:afterEdit:66612e9a",
+        "tool_id": "Edit",
+        "source_scene": "unknown",
+        "edit_kind": "file_edit",
+        "tool_type": "agent",
+        "client_type": "ide",
+        "session_id": "6a911ef67bc731d7212527bc",
+        "external_session_id": "6a911ef67bc731d7212527bc",
+        "runtime_client": "trae-tob-git-ai"
+      }
+    }
+  }
+}
