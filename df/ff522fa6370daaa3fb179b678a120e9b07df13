@@ -1,0 +1,58 @@
+vllm_ascend/worker/worker.py
+  s_53ba11096e03af::t_5344dacf1ac278 175
+  s_a3cff151f233dd::t_0793a5e3a30f9a 679
+  s_53ba11096e03af::t_21b04bc9d0aa30 682-689
+  s_53ba11096e03af::t_3e57d4b738a23e 674-677
+  s_53ba11096e03af::t_246a523f92dd6a 678,680-681,690
+  s_53ba11096e03af::t_b6c31853735f7b 172-174
+  s_53ba11096e03af::t_741f3ad7ee740b 691
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "dfff522fa6370daaa3fb179b678a120e9b07df13",
+  "prompts": {},
+  "humans": {
+    "h_ad66a26c65370e": {
+      "author": "tiankaijin <tiankaijin1@h-partners.com>"
+    }
+  },
+  "sessions": {
+    "s_53ba11096e03af": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a911ef67bc731d7212527bc",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "runtime_client": "trae-tob-git-ai",
+        "dedupe_key": "6a911ef67bc731d7212527bc:6a9fcd1570169d284d634eb7:afterEdit:66612e9a",
+        "operation_id": "6a9fcd1570169d284d634eb7",
+        "client_type": "ide",
+        "tool_use_id": "6a9fcd1570169d284d634eb7",
+        "tool_type": "agent",
+        "source_scene": "unknown",
+        "edit_kind": "file_edit",
+        "tool_id": "Edit",
+        "external_session_id": "6a911ef67bc731d7212527bc",
+        "session_id": "6a911ef67bc731d7212527bc"
+      }
+    },
+    "s_a3cff151f233dd": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-b4c6e96a-53b7-433d-b87f-95824701bad3",
+        "model": "default"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "client_type": "ide",
+        "tool": "trae-cue",
+        "external_session_id": "icr-b4c6e96a-53b7-433d-b87f-95824701bad3",
+        "edit_kind": "file_edit",
+        "source_scene": "cue"
+      }
+    }
+  }
+}
