@@ -258,7 +258,7 @@ class AscendConfig:
     msmonitor_use_daemon: bool = False
     enable_transpose_kv_cache_by_block: bool = True
     weight_nz_mode: int = 1
-    ft_communication_ops_abort_timeout_ms: int = 0
+    ft_communication_abort_timeout: int = 0
 
     # ---- sub-configs (no vllm_config dep): pydantic dict→dataclass coercion ----
     ascend_compilation_config: AscendCompilationConfig = dataclasses.field(default_factory=AscendCompilationConfig)
@@ -305,7 +305,7 @@ class AscendConfig:
             "msmonitor_use_daemon": "MSMONITOR_USE_DAEMON",
             "enable_transpose_kv_cache_by_block": "VLLM_ASCEND_FUSION_OP_TRANSPOSE_KV_CACHE_BY_BLOCK",
             "weight_nz_mode": "VLLM_ASCEND_ENABLE_NZ",
-            "ft_communication_ops_abort_timeout_ms": "FT_COMMUNICATION_OPS_ABORT_TIMEOUT_MS",
+            "ft_communication_abort_timeout": "FT_COMMUNICATION_ABORT_TIMEOUT",
         }
         for key, env_name in _A_FAMILY.items():
             if key in kw:
@@ -324,10 +324,13 @@ class AscendConfig:
     def _validate_user_input_ranges(self):
         if self.weight_nz_mode not in (0, 1, 2):
             raise ValueError(f"weight_nz_mode must be one of 0, 1, or 2; got {self.weight_nz_mode}")
-        if not isinstance(self.ft_communication_ops_abort_timeout_ms, int) or self.ft_communication_ops_abort_timeout_ms < 0:
+        if (
+            not isinstance(self.ft_communication_abort_timeout, int)
+            or self.ft_communication_abort_timeout < 0
+        ):
             raise ValueError(
-                f"ft_communication_ops_abort_timeout_ms must be a non-negative integer, "
-                f"got {self.ft_communication_ops_abort_timeout_ms}"
+                f"ft_communication_abort_timeout must be a non-negative integer "
+                f"(in seconds), got {self.ft_communication_abort_timeout}"
             )
         return self
 

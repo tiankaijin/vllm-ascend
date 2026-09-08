@@ -100,10 +100,10 @@ env_variables: dict[str, Callable[[], Any]] = {
     # Control the aclrtMemcpyBatchAsync compile path for KV cache offloading.
     # "1": force enable, "0": force disable, None: auto-detect from CANN headers.
     "VLLM_ASCEND_ENABLE_BATCH_MEMCPY": lambda: os.getenv("VLLM_ASCEND_ENABLE_BATCH_MEMCPY", None),
-    # Fault-tolerance timeout (in milliseconds) after which a hung NPU operator
+    # Fault-tolerance timeout (in seconds) after which a hung NPU operator
     # (e.g. a communication op) is aborted with a timeout exception, so fault
     # detection can recover the engine. 0 means disabled (no timeout).
-    "FT_COMMUNICATION_OPS_ABORT_TIMEOUT_MS": lambda: int(os.getenv("FT_COMMUNICATION_OPS_ABORT_TIMEOUT_MS", "0")),
+    "FT_COMMUNICATION_ABORT_TIMEOUT": lambda: int(os.getenv("FT_COMMUNICATION_ABORT_TIMEOUT", "0")),
 }
 
 # end-env-vars-definition
