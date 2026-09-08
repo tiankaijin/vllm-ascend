@@ -1,0 +1,47 @@
+vllm_ascend/worker/worker.py
+  s_53ba11096e03af::t_e47bc7447c1110 672
+  s_53ba11096e03af::t_43da06e6122c8b 387
+  h_ad66a26c65370e 23,371-386,388-401,673-674
+vllm_ascend/ascend_config.py
+  s_53ba11096e03af::t_cea37a23286002 328-329,332-333
+  s_53ba11096e03af::t_a64c614bb3c45f 308
+  s_53ba11096e03af::t_c8941ed7e73ce7 261
+  s_53ba11096e03af::t_3c52dfad3aebf4 327,330
+vllm_ascend/envs.py
+  s_53ba11096e03af::t_312377a285a92b 103
+  s_53ba11096e03af::t_68aea4fcf4e671 106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "279647b65e59a44674309036260aa09fc83f0461",
+  "prompts": {},
+  "humans": {
+    "h_ad66a26c65370e": {
+      "author": "tiankaijin <tiankaijin1@h-partners.com>"
+    }
+  },
+  "sessions": {
+    "s_53ba11096e03af": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a911ef67bc731d7212527bc",
+        "model": "glm-5.3__dev"
+      },
+      "human_author": "tiankaijin <tiankaijin1@h-partners.com>",
+      "custom_attributes": {
+        "operation_id": "6a9fbc4270169d284d634d8a",
+        "dedupe_key": "6a911ef67bc731d7212527bc:6a9fbc4270169d284d634d8a:afterEdit:238b508c",
+        "tool_type": "agent",
+        "client_type": "ide",
+        "session_id": "6a911ef67bc731d7212527bc",
+        "tool_id": "Edit",
+        "runtime_client": "trae-tob-git-ai",
+        "source_scene": "unknown",
+        "edit_kind": "file_edit",
+        "external_session_id": "6a911ef67bc731d7212527bc",
+        "tool_use_id": "6a9fbc4270169d284d634d8a"
+      }
+    }
+  }
+}
